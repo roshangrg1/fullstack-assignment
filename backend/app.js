@@ -34,10 +34,11 @@ app.use(fileUpload({
 
 // importing routes
 const user = require("./routes/user")
+const book = require('./routes/book')
 
 // router middlewares
 app.use("/api/v1", user);
-
+app.use('/api/v1', book)
 
 app.get("/", (req, res) => {
     res.send("home");
