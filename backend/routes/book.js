@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 
-const { addBook, adminGetAllBooks,adminUpdateOneBook} = require("../controllers/book.controller");
+const { addBook, adminGetAllBooks,adminUpdateOneBook,adminDeleteOneBook} = require("../controllers/book.controller");
 const {isLoggedIn, customRole} = require('../middlewares/auth.middleware')
 
 // Admin routes
@@ -15,6 +15,7 @@ router
   router
   .route("/admin/book/:id")
   .put(isLoggedIn, customRole("admin"), adminUpdateOneBook)
+  .delete(isLoggedIn, customRole("admin"),adminDeleteOneBook );
 
 
 
