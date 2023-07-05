@@ -132,3 +132,26 @@ exports.admingetOneUser = tryCatchHandler(async (req, res, next) => {
   });
 });
 
+exports.adminUpdateOneUserDetails = tryCatchHandler(async (req, res, next) => {
+    // add a check for email and name in body
+  
+    // get data from request body
+    const newData = {
+      name: req.body.name,
+      email: req.body.email,
+      roles: req.body.roles,
+    };
+  
+    // update the user in database
+    const user = await User.findByIdAndUpdate(req.params.id, newData, {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    });
+  
+    res.status(200).json({
+      success: true,
+    });
+  });
+
+
