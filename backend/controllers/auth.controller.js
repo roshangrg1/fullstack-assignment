@@ -77,6 +77,35 @@ exports.login = tryCatchHandler (async(req,res) =>{
     throw new CustomError('Invalid credentials - pass', 400)
 })
 
+// logout controller
+exports.logout = tryCatchHandler(async (_req, res) =>{
+    // res.clearCookie()
+    res.cookie("token", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true
+    })
+    res.status(200).json({
+        success: true,
+        message: "Logged Out"
+    })
+})
+
+// get profile
+
+exports.getProfile = tryCatchHandler(async(req, res)=>{
+    // req.user
+    const {user} =  req;
+
+    if (! user){
+        throw new CustomError('user not  found ', 404)
+    }
+
+    res.status(200).json({
+        success:true,
+        user
+    })
+})
+
 
 
 
