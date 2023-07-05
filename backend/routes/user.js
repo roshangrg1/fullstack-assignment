@@ -12,5 +12,6 @@ router.route("/profile").get(isLoggedIn, getProfile)
 router.route("/admin/users").get(isLoggedIn, customRole("admin"), adminAllUser);
 router.route("/admin/user/:id")
 .get(isLoggedIn, customRole("admin"), admingetOneUser)
+.put(isLoggedIn, customRole("admin"), adminUpdateOneUserDetails)
 
 module.exports = router;
