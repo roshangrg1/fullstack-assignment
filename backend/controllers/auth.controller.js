@@ -106,6 +106,19 @@ exports.getProfile = tryCatchHandler(async(req, res)=>{
     })
 })
 
+// admin
+
+exports.adminAllUser = tryCatchHandler(async (req, res, next) => {
+    // select all users
+    const users = await User.find();
+  
+    // send all users
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  });
+
 
 
 
