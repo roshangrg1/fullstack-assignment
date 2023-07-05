@@ -34,10 +34,20 @@ exports.addBook = tryCatchHandler(async(req, res, next)=>{
     req.body.photos = imageArray;
     req.body.user = req.user.id
 
-    const product =await Book.create(req.body)
+    const books =await Book.create(req.body)
     res.status(200).json({
         success:true,
-        product,
+        books,
     })
 });
 
+exports.adminGetAllBooks = tryCatchHandler(async (req, res , next)=>{
+    const books = await Book.find()
+
+
+    res.status(200).json({
+        success:true,
+        books
+
+    })
+})
