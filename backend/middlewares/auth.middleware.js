@@ -25,3 +25,13 @@ exports.isLoggedIn = tryCatchHandler(async (req, res, next) => {
   next();
 });
 
+exports.customRole = (roles) => {
+  console.log(roles)
+  return (req, res, next) => {
+    console.log(req.user.role)
+    if (!roles.includes(req.user.role)) {
+      return next(new CustomError(`${roles}You are not allowed for this resouce`, 403));
+    }
+    next();
+  };
+};
