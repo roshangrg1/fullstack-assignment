@@ -2,6 +2,7 @@ const Book = require("../models/book.schema");
 const tryCatchHandler = require("../utils/tryCatchHandler");
 const CustomError = require("../utils/customError");
 const cloudinary = require("cloudinary");
+const WhereClause =require('../utils/whereClause')
 
 // For admin only
 
@@ -123,3 +124,30 @@ exports.adminDeleteOneBook = tryCatchHandler(async(req, res, next)=>{
         message: "book was deleted !"
     })
 })
+
+// All User
+
+exports.getAllBooks = tryCatchHandler(async (req, res, next) => {
+    const resultPerPage = 6;
+    const totalcountBook = await Book.countDocuments();
+  
+    const booksObj = new WhereClause(Book.find(), req.query)
+      .search()
+      .filter();
+  
+    let books = await booksObj.base;
+    const filteredBookNumber = books.length;
+  
+    //books.limit().skip()
+  
+    booksObj.pager(resultPerPage);
+    books = await booksObj.base.clone();
+  
+    res.status(200).json({
+      success: true,
+      books,
+      filteredBookNumber,
+      totalcountBook,
+    });
+  });
+  
