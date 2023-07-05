@@ -90,7 +90,7 @@ exports.logout = tryCatchHandler(async (_req, res) =>{
     })
 })
 
-// get profile
+// get profile controller
 
 exports.getProfile = tryCatchHandler(async(req, res)=>{
     // req.user
