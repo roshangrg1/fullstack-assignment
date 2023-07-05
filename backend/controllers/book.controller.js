@@ -150,4 +150,18 @@ exports.getAllBooks = tryCatchHandler(async (req, res, next) => {
       totalcountBook,
     });
   });
+
+  exports.getOneBook= tryCatchHandler(async(req,res, next) =>{
+    const book = await Book.findById(req.params.id)
+
+    if(!book){
+        return next(new CustomError('No book found with this id', 400))
+    }
+  
+    res.status(200).json({
+        success:true,
+        book
+
+    })
+})
   
