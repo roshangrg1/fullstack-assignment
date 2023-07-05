@@ -56,7 +56,7 @@ exports.adminUpdateOneBook = tryCatchHandler(async(req, res, next)=>{
     let book = await  Book.findById(req.params.id);
 
     if (!book){
-        return next (new CustomError("No product found with this id", 400))
+        return next (new CustomError("No book found with this id", 400))
     }
 
     let imagesArray =[]
@@ -100,5 +100,26 @@ exports.adminUpdateOneBook = tryCatchHandler(async(req, res, next)=>{
     res.status(200).json({
         success: true,
         book,
+    })
+})
+
+exports.adminDeleteOneBook = tryCatchHandler(async(req, res, next)=>{
+    const book = await  Book.findById(req.params.id);
+
+    if (!book){
+        return next (new CustomError("No book found with this id", 400))
+    }
+
+    // destroy the existing image.
+    for (let i = 0; i < book.photos.length; i++) {
+        const res = await cloudinary.v2.uploader.destroy(book.photos[i].id)
+        
+    }
+    
+   await book.deleteOne()
+
+    res.status(200).json({
+        success: true,
+        message: "book was deleted !"
     })
 })
