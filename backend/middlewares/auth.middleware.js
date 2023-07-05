@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../models/user.schema");
 const tryCatchHandler = require("../utils/tryCatchHandler");
 const CustomError = require("../utils/customError");
 const jwt = require("jsonwebtoken");
@@ -25,13 +25,3 @@ exports.isLoggedIn = tryCatchHandler(async (req, res, next) => {
   next();
 });
 
-exports.customRole = (roles) => {
-  console.log(roles)
-  return (req, res, next) => {
-    console.log(req.user.role)
-    if (!roles.includes(req.user.role)) {
-      return next(new CustomError(`${roles}You are not allowed for this resouce`, 403));
-    }
-    next();
-  };
-};
