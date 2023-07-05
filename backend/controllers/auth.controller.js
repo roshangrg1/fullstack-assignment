@@ -1,126 +1,134 @@
 const User = require("../models/user.schema");
-const tryCatchHandler = require('../utils/tryCatchHandler')
+const tryCatchHandler = require("../utils/tryCatchHandler");
 const CustomError = require("../utils/customError");
 
+//
+exports.cookieOptions = {
+  expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+  httpOnly: true,
 
+  // could be in separate file in utils
+};
 
-// 
-exports.cookieOptions={
-    expires: new Date (Date.now() + 3 * 24 * 60 *60 * 1000),
-    httpOnly: true,
-
-    // could be in separate file in utils 
-}
- 
 // signup controller
 exports.signup = tryCatchHandler(async (req, res, next) => {
-    // collect data from frontend
-    const {name, email, password} = req.body
+  // collect data from frontend
+  const { name, email, password } = req.body;
 
-    if(!name || !email || !password){
-        throw new CustomError('Please fill all fields', 400)
-    }
+  if (!name || !email || !password) {
+    throw new CustomError("Please fill all fields", 400);
+  }
 
-    // check if user exists
+  // check if user exists
 
-    const existingUser =await User.findOne({email})
+  const existingUser = await User.findOne({ email });
 
-    if (existingUser){
-        throw new CustomError('User alreaady exists',400)
-    }
+  if (existingUser) {
+    throw new CustomError("User alreaady exists", 400);
+  }
 
-    const user = await User.create({
-        name,
-        email,
-        password
-    })
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
 
-    const token = user.getJwtToken()
-    console.log(user);
-    user.password = undefined
+  const token = user.getJwtToken();
+  console.log(user);
+  user.password = undefined;
 
-    res.cookie("token", token, this.cookieOptions);
-    res.status(200).json({
-        success:true,
-        token,
-        user
-    })
+  res.cookie("token", token, this.cookieOptions);
+  res.status(200).json({
+    success: true,
+    token,
+    user,
+  });
 });
 
 // login controller
-exports.login = tryCatchHandler (async(req,res) =>{
-    const {email, password} = req.body
+exports.login = tryCatchHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    if( !email || !password){
-        throw new CustomError('Please fill all fields', 400)
-    }
+  if (!email || !password) {
+    throw new CustomError("Please fill all fields", 400);
+  }
 
-    const user= await User.findOne({email}).select("+password")
+  const user = await User.findOne({ email }).select("+password");
 
-    if(!user){
-        throw new CustomError('Invalid credentials', 400)
-    }
+  if (!user) {
+    throw new CustomError("Invalid credentials", 400);
+  }
 
-    const isPasswordMatched =await user.comparePassword(password)
+  const isPasswordMatched = await user.comparePassword(password);
 
-    if(isPasswordMatched){
-        const token = user.getJwtToken()
-        user.password = undefined;
-        res.cookie("token", token, this.cookieOptions)
-        return res.status(200).json({
-            success:true,
-            token,
-            user
-        })
-    }
+  if (isPasswordMatched) {
+    const token = user.getJwtToken();
+    user.password = undefined;
+    res.cookie("token", token, this.cookieOptions);
+    return res.status(200).json({
+      success: true,
+      token,
+      user,
+    });
+  }
 
-    throw new CustomError('Invalid credentials - pass', 400)
-})
+  throw new CustomError("Invalid credentials - pass", 400);
+});
 
 // logout controller
-exports.logout = tryCatchHandler(async (_req, res) =>{
-    // res.clearCookie()
-    res.cookie("token", null, {
-        expires: new Date(Date.now()),
-        httpOnly: true
-    })
-    res.status(200).json({
-        success: true,
-        message: "Logged Out"
-    })
-})
+exports.logout = tryCatchHandler(async (_req, res) => {
+  // res.clearCookie()
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+  res.status(200).json({
+    success: true,
+    message: "Logged Out",
+  });
+});
 
 // get profile controller
 
-exports.getProfile = tryCatchHandler(async(req, res)=>{
-    // req.user
-    const {user} =  req;
+exports.getProfile = tryCatchHandler(async (req, res) => {
+  // req.user
+  const { user } = req;
 
-    if (! user){
-        throw new CustomError('user not  found ', 404)
-    }
+  if (!user) {
+    throw new CustomError("user not  found ", 404);
+  }
 
-    res.status(200).json({
-        success:true,
-        user
-    })
-})
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
 
 // admin
 
 exports.adminAllUser = tryCatchHandler(async (req, res, next) => {
-    // select all users
-    const users = await User.find();
-  
-    // send all users
-    res.status(200).json({
-      success: true,
-      users,
-    });
+  // select all users
+  const users = await User.find();
+
+  // send all users
+  res.status(200).json({
+    success: true,
+    users,
   });
+});
 
+exports.admingetOneUser = tryCatchHandler(async (req, res, next) => {
+  // get id from url and get user from database
+  const user = await User.findById(req.params.id);
 
+  if (!user) {
+    next(new CustomError("No user found", 400));
+  }
 
-
-
+  // send user
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
 
