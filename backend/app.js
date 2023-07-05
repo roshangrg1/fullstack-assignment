@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser")
 
 const app = express()
 
-// middleware
+// middlewares
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cors())
@@ -18,7 +18,7 @@ app.use(morgan('tiny'))
 // importing routes
 const user = require("./routes/user")
 
-// router middleware
+// router middlewares
 app.use("/api/v1", user);
 
 
