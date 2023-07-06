@@ -44,3 +44,27 @@ exports.getOneOrder = tryCatchHandler(async (req, res, next) => {
     order,
   });
 });
+
+exports.getLoggedInOrders = tryCatchHandler(async (req, res, next) => {
+  const order = await Order.find({ user: req.user._id });
+
+  if (!order) {
+    return next(new CustomError("please check order id", 401));
+  }
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
+// Admin only
+
+exports.admingetAllOrders = tryCatchHandler(async (req, res, next) => {
+  const orders = await Order.find();
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+});
