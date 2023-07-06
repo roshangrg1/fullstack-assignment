@@ -1,6 +1,7 @@
 const Order = require("../models/order.schema");
 const tryCatchHandler = require("../utils/tryCatchHandler");
 const CustomError = require("../utils/customError");
+const Book = require("../models/book.schema");
 
 
 exports.createOrder = tryCatchHandler(async (req, res, next) => {
@@ -68,3 +69,33 @@ exports.admingetAllOrders = tryCatchHandler(async (req, res, next) => {
     orders,
   });
 });
+
+exports.adminUpdateOrder = tryCatchHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  if (order.orderStatus === "Delivered") {
+    return next(new CustomError("Order is already marked for delivered", 401));
+  }
+
+  order.orderStatus = req.body.orderStatus;
+
+  order.orderItems.forEach(async (b) => {
+    await updateBookStock(b.book, b.quantity);
+  });
+
+  await order.save();
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
+// function used  for update
+async function updateBookStock(bookId, quantity) {
+  const book = await Book.findById(bookId);
+
+  book.stock = book.stock - quantity;
+
+  await book.save({ validateBeforeSave: false });
+}
