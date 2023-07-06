@@ -99,3 +99,13 @@ async function updateBookStock(bookId, quantity) {
 
   await book.save({ validateBeforeSave: false });
 }
+
+exports.adminDeleteOrder = tryCatchHandler(async (req, res, next) => {
+  const order = await Order.findById(req.params.id);
+
+  await order.deleteOne();
+
+  res.status(200).json({
+    success: true,
+  });
+});
