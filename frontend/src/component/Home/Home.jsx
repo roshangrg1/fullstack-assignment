@@ -1,5 +1,6 @@
 import React from "react";
 import BookCard from "./BookCard";
+import MetaData from "../layout/MetaData";
 
 
 const book ={
@@ -13,7 +14,9 @@ const book ={
 }
 const Home = () => {
   return (
+    
     <div className="home">
+      <MetaData title="Ecommerce"/>
       {/* banner */}
       <div className=" py-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
